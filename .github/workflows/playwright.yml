@@ -8,23 +8,39 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: assignment1
+    strategy:
+      matrix:
+        assignment: [assignment1, assignment2]
     steps:
     - uses: actions/checkout@v6
     - uses: actions/setup-node@v6
       with:
         node-version: lts/*
-    - name: Install dependencies
+    - name: Cache npm dependencies for ${{ matrix.assignment }}
+      uses: actions/cache@v4
+      with:
+        path: ${{ matrix.assignment }}/node_modules
+        key: ${{ runner.os }}-npm-${{ matrix.assignment }}-${{ hashFiles(format('{0}/package-lock.json', matrix.assignment)) }}
+        restore-keys: |
+          ${{ runner.os }}-npm-${{ matrix.assignment }}-
+    - name: Install dependencies for ${{ matrix.assignment }}
+      working-directory: ${{ matrix.assignment }}
       run: npm ci
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles(format('{0}/package-lock.json', matrix.assignment)) }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
+    - name: Run Playwright tests for ${{ matrix.assignment }}
+      working-directory: ${{ matrix.assignment }}
       run: npm run regression
     - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
-        path: assignment1/playwright-report/
+        name: playwright-report-${{ matrix.assignment }}
+        path: ${{ matrix.assignment }}/playwright-report/
         retention-days: 30
