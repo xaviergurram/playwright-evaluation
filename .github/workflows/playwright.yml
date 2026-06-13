@@ -17,7 +17,7 @@ jobs:
       with:
         node-version: lts/*
     - name: Cache npm dependencies for ${{ matrix.assignment }}
-      uses: actions/cache@v7
+      uses: actions/cache@v5
       with:
         path: ${{ matrix.assignment }}/node_modules
         key: ${{ runner.os }}-npm-${{ matrix.assignment }}-${{ hashFiles(format('{0}/package-lock.json', matrix.assignment)) }}
@@ -27,7 +27,7 @@ jobs:
       working-directory: ${{ matrix.assignment }}
       run: npm ci
     - name: Cache Playwright browsers
-      uses: actions/cache@v7
+      uses: actions/cache@v5
       with:
         path: ~/.cache/ms-playwright
         key: ${{ runner.os }}-playwright-${{ hashFiles(format('{0}/package-lock.json', matrix.assignment)) }}
