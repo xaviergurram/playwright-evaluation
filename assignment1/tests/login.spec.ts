@@ -3,7 +3,7 @@ import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 
 test.describe('Login flows', () => {
-  test('successful login navigates to dashboard', async ({ page }) => {
+  test('@smoke successful login navigates to dashboard', async ({ page }) => {
     const loginPage: LoginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.login('Admin', 'admin123');
