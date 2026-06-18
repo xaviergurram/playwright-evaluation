@@ -34,6 +34,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-playwright-
     - name: Install Playwright Browsers
+      working-directory: ${{ matrix.assignment }}
       run: npx playwright install --with-deps
     - name: Run Playwright tests for ${{ matrix.assignment }}
       working-directory: ${{ matrix.assignment }}
